@@ -35,7 +35,7 @@ const config: Config = {
       },
       fontSize: {
         // Redaction (headlines). All uppercase at call sites.
-        h1: ["clamp(48px, 8.6vw, 130px)", { lineHeight: "1.2" }], // hero only
+        h1: ["clamp(48px, 7.275vw, 110px)", { lineHeight: "1.2" }], // hero only (110px; Figma frame had 130px)
         h2: ["clamp(36px, 4.63vw, 70px)", { lineHeight: "1.2" }], // section headlines
         cta: ["clamp(32px, 4.96vw, 75px)", { lineHeight: "1.2" }], // 75px: closing call-to-action headline
         wordmark: ["clamp(24px, 8.7vw, 132px)", { lineHeight: "1.2" }], // giant footer wordmark
