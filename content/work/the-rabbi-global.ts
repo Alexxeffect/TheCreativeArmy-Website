@@ -4,13 +4,11 @@ import type { CaseStudy } from "@/content/types";
  * The Rabbi Global (TRG) case study.
  * Source: Figma "TRG Casestudy" (node 568:236).
  *
- * ⚠ MISSING MOTION PIECES. Figma shows four animated blocks that exist only as
- * empty frames (no video files were found on this computer). When the files are
- * supplied, add them at these spots, as `wide` video blocks:
- *   1. After the header:               "TRG_sting_full_v16"                 (1415 × 796)
- *   2. After the logo + t-shirt pair:  "trg_names_loop_final"               (1422 × 800)
- *   3. After "Taking the World":       "TRG_Mission100k_billboard_motion"   (1421 × 799)
- *   4. After #3:                       "TRG_connecting_split_v9"            (1422 × 800)
+ * Motion pieces (looping muted videos in /public/videos/trg, encoded from the
+ * source files in Clients/Adewole Timothy/TRG Branding/Casestudy): the sting
+ * (after the header), the names loop, the Mission 100k billboard and the
+ * "connecting" split, placed where Figma has them. The billboard source is
+ * 2480 × 2158; it is centre-cropped to 16:9 to match Figma's frame.
  *
  * ⚠ The palette image shows "#FF000" and "#FFFFF" (a digit short). The text is
  * baked into the image from Figma; fix in Figma and re-export.
@@ -43,6 +41,16 @@ export const theRabbiGlobal: CaseStudy = {
 
   blocks: [
     {
+      type: "wide",
+      ratio: "1415 / 796",
+      tile: {
+        kind: "video",
+        src: "/videos/trg/sting.mp4",
+        poster: "/videos/trg/sting.jpg",
+        alt: "Animated TRG logo sting: the wordmark builds, a ring of faces circles it, and it resolves into the atom mark",
+      },
+    },
+    {
       type: "pair",
       left: {
         kind: "logo",
@@ -57,6 +65,16 @@ export const theRabbiGlobal: CaseStudy = {
         src: "/images/home/trg-tshirt.png",
         alt: "T-shirt printed with The Rabbi Global emblem",
         position: "bottom",
+      },
+    },
+    {
+      type: "wide",
+      ratio: "1422 / 800",
+      tile: {
+        kind: "video",
+        src: "/videos/trg/names-loop.mp4",
+        poster: "/videos/trg/names-loop.jpg",
+        alt: "“Connecting [name] to purpose” with a scrolling list of names, on deep maroon",
       },
     },
     {
@@ -79,6 +97,26 @@ export const theRabbiGlobal: CaseStudy = {
         kind: "image",
         src: "/images/work/trg/world.webp",
         alt: "“We are taking the world by storm”, with The Rabbi Global mark as the O in WORLD",
+      },
+    },
+    {
+      type: "wide",
+      ratio: "1421 / 799",
+      tile: {
+        kind: "video",
+        src: "/videos/trg/mission-billboard.mp4",
+        poster: "/videos/trg/mission-billboard.jpg",
+        alt: "A billboard on a building counting up to “Mission 100,000”, over a map of the world",
+      },
+    },
+    {
+      type: "wide",
+      ratio: "1422 / 800",
+      tile: {
+        kind: "video",
+        src: "/videos/trg/connecting-split.mp4",
+        poster: "/videos/trg/connecting-split.jpg",
+        alt: "“Connecting” and “to purpose” split around a portrait, with the TRG atom mark below",
       },
     },
     {

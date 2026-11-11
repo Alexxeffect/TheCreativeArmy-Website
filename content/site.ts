@@ -39,11 +39,11 @@ export const site = {
     // The headline cycles through these, word by word (see CyclingHeadline).
     // The first one is what shows on load / with reduced motion.
     headlines: [
-      // "\n" = exact line break (tablet/desktop; phones wrap naturally)
-      "Big ideas deserve\nto look the part",
-      // "\n" = exact line break (tablet/desktop). This gives the rag:
+      // "\n" = exact line break (tablet/desktop; phones wrap naturally).
+      // This gives the rag:
       //   EMPOWERING THE / VOICES OF THE IDEAS / DEFINING TOMORROW
       "Empowering the\nvoices of the ideas\ndefining tomorrow",
+      "Big ideas deserve\nto look the part",
     ],
     // ⚠ Figma copy uses the word "challenger". BUILD_PLAN.md says not to use it
     // on-page. Kept as designed until Alex decides.

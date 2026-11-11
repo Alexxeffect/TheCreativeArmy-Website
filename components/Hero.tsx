@@ -15,7 +15,7 @@ export default function Hero() {
           lineHeight={1.2}
           holdMs={6000}
         />
-        <p className="mt-[clamp(20px,3.1vw,47px)] max-w-[975px] text-b1">{site.hero.subhead}</p>
+        <p className="mt-[clamp(20px,3.1vw,47px)] max-w-[27em] text-b1">{site.hero.subhead}</p>
       </Container>
     </section>
   );

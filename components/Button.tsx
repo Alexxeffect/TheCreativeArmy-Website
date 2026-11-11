@@ -10,7 +10,7 @@ import type { ReactNode } from "react";
  * Variants (all from the Figma design):
  *  - "brand"   orange fill, white text      (nav "Reach out", email CTA)
  *  - "outline" orange outline, black text   ("Schedule a call")
- *  - "dark"    black fill, white text       ("View Project")
+ *  - "dark"    black fill, white text, turns orange on hover ("View Project")
  *  - "light"   white fill, red text         ("Learn More" on the orange panel)
  *
  * Sizes: "sm" is the nav/offer size, "md" the project-row size, "lg" and "xl"
@@ -28,6 +28,15 @@ const variantClass: Record<Variant, string> = {
   outline: "border-[1.5px] border-brand text-ink",
   dark: "bg-ink text-paper",
   light: "bg-paper text-trg",
+};
+
+// What each variant does on hover (only for buttons that go somewhere). The
+// black button turns brand orange; the others fade slightly.
+const hoverClass: Record<Variant, string> = {
+  brand: "hover:opacity-85",
+  outline: "hover:opacity-85",
+  dark: "hover:bg-brand",
+  light: "hover:opacity-85",
 };
 
 const sizeClass: Record<Size, string> = {
@@ -48,12 +57,13 @@ type Props = {
 };
 
 export default function Button({ href, variant, size, children, className = "" }: Props) {
-  const classes = `inline-flex items-center justify-center whitespace-nowrap transition-opacity hover:opacity-85 ${variantClass[variant]} ${sizeClass[size]} ${className}`;
+  const base = `inline-flex items-center justify-center whitespace-nowrap transition-[opacity,background-color] duration-200 ${variantClass[variant]} ${sizeClass[size]} ${className}`;
+  const classes = `${base} ${hoverClass[variant]}`;
 
   if (!href) {
     // Inactive: no destination yet. aria-disabled tells screen readers.
     return (
-      <span role="link" aria-disabled="true" className={`${classes} cursor-default hover:opacity-100`}>
+      <span role="link" aria-disabled="true" className={`${base} cursor-default`}>
         {children}
       </span>
     );
