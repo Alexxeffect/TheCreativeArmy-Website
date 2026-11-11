@@ -64,7 +64,7 @@ const config: Config = {
         marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
       },
       animation: {
-        marquee: "marquee 36.4s linear infinite", // was 40s; 10% faster
+        marquee: "marquee 31.65s linear infinite", // was 40s; +10% then +15% faster
       },
       maxWidth: {
         page: "1512px", // Figma frame width
