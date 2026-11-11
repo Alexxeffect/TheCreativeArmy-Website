@@ -46,6 +46,9 @@ const config: Config = {
         quote: ["clamp(18px, 1.65vw, 25px)", { lineHeight: "1.2" }], // 25px: testimonials, CTA labels
         btn: ["clamp(16px, 1.39vw, 21px)", { lineHeight: "1.2" }], // 21px: small buttons
         b3: ["clamp(16px, 1.32vw, 20px)", { lineHeight: "1.2" }], // 20px: body, labels, project rows
+        // 22px reading copy, same recipe as the portfolio site's "Change by Design" text:
+        // 22px at 834px wide and up, shrinking to 16px; line height 1.4.
+        copy: ["clamp(16px, 2.638vw, 22px)", { lineHeight: "1.4" }],
       },
       borderRadius: {
         card: "15px", // work image tiles
@@ -61,7 +64,7 @@ const config: Config = {
         marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
       },
       animation: {
-        marquee: "marquee 40s linear infinite",
+        marquee: "marquee 36.4s linear infinite", // was 40s; 10% faster
       },
       maxWidth: {
         page: "1512px", // Figma frame width

@@ -14,7 +14,7 @@ export default function ClientStrip() {
         layout="centered"
         heading={site.clients.heading}
         body={[site.clients.body, site.clients.lead]}
-        textClass="text-b3"
+        textClass="text-copy"
         uppercase
         below={<LogoMarquee />}
       />

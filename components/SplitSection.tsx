@@ -54,9 +54,16 @@ export default function SplitSection({
         {/* w-fit + mx-auto centres the whole block (row + anything under it) */}
         <div className="mx-auto w-fit max-w-full">
           <div className="flex flex-col gap-[clamp(32px,4vw,56px)] min-[835px]:flex-row min-[835px]:items-start min-[835px]:justify-center min-[835px]:gap-[clamp(40px,9.72vw,140px)]">
-            <h2 className={`${headingBase} min-[835px]:shrink-0`}>{headingContent}</h2>
+            {/* Top alignment: each box has empty space above its first line (from
+                line height + font metrics). Measured from the real fonts: the
+                heading's capitals start 0.25em down, the text's first line
+                0.3235em down. Pulling each up by its own amount puts both tops
+                on the same line at every screen size. */}
+            <h2 className={`${headingBase} min-[835px]:-mt-[0.25em] min-[835px]:shrink-0`}>
+              {headingContent}
+            </h2>
             <div
-              className={`space-y-[1.2em] ${textClass} min-[835px]:min-w-0 min-[835px]:flex-[0_1_500px]`}
+              className={`space-y-[1.4em] ${textClass} min-[835px]:-mt-[0.3235em] min-[835px]:min-w-0 min-[835px]:flex-[0_1_500px]`}
             >
               {paragraphs}
             </div>
