@@ -31,7 +31,7 @@ const config: Config = {
       fontFamily: {
         // Adobe Fonts kit urt4kvy (loaded in app/layout.tsx)
         display: ["redaction", "serif"], // headlines + wordmark
-        sans: ["neue-haas-grotesk-display", "sans-serif"], // everything else
+        sans: ["neue-haas-grotesk-text", "sans-serif"], // everything else (Text cut, same as the portfolio site)
       },
       fontSize: {
         // Redaction (headlines). All uppercase at call sites.
@@ -40,7 +40,7 @@ const config: Config = {
         cta: ["clamp(32px, 4.96vw, 75px)", { lineHeight: "1.2" }], // 75px: closing call-to-action headline
         wordmark: ["clamp(24px, 8.7vw, 132px)", { lineHeight: "1.2" }], // giant footer wordmark
         "wordmark-nav": ["clamp(18px, 1.65vw, 25px)", { lineHeight: "1.2" }], // nav wordmark
-        // Neue Haas Grotesk Display (everything else)
+        // Neue Haas Grotesk Text (everything else)
         sh1: ["clamp(22px, 2.31vw, 35px)", { lineHeight: "1.2" }], // 35px
         b1: ["clamp(20px, 1.98vw, 30px)", { lineHeight: "1.2" }], // 30px  (b2 = same, bold)
         quote: ["clamp(18px, 1.65vw, 25px)", { lineHeight: "1.2" }], // 25px: testimonials, CTA labels
@@ -55,6 +55,13 @@ const config: Config = {
       spacing: {
         // Page side margin: Figma uses 45px on a 1512 frame.
         gutter: "clamp(20px, 3vw, 45px)",
+      },
+      keyframes: {
+        // Logo carousel: slide left by exactly one copy of the logo list.
+        marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
+      },
+      animation: {
+        marquee: "marquee 40s linear infinite",
       },
       maxWidth: {
         page: "1512px", // Figma frame width

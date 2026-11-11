@@ -15,7 +15,7 @@ npm run build    # production build (all pages are static)
 | **All landing-page copy**, links, projects, client logos | `content/site.ts` |
 | **Case study pages** (copy + images + videos) | `content/work/*.ts`, registered in `content/work/index.ts` |
 | Design tokens (colours, type sizes, radii) | `tailwind.config.ts`: the only place sizes/colours are defined |
-| Fonts | Adobe Fonts kit `urt4kvy`, linked in `app/layout.tsx` (`redaction`, `neue-haas-grotesk-display`) |
+| Fonts | Adobe Fonts kit `urt4kvy`, linked in `app/layout.tsx` (`redaction`, `neue-haas-grotesk-text`) |
 | Sections / components | `components/` |
 | Images, videos | `public/images/`, `public/videos/` |
 

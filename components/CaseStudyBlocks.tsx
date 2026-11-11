@@ -1,4 +1,5 @@
 import Container from "@/components/Container";
+import SplitSection from "@/components/SplitSection";
 import WorkTile from "@/components/WorkTile";
 import type { Block } from "@/content/types";
 
@@ -50,14 +51,7 @@ export function CaseStudyBlock({ block, priority = false }: { block: Block; prio
       );
 
     case "section":
-      return (
-        <Container>
-          <div className="grid gap-6 md:grid-cols-2 md:gap-[clamp(8px,1.3vw,20px)]">
-            <h2 className="max-w-[7em] font-display text-h2">{block.heading}</h2>
-            <Paragraphs body={block.body} />
-          </div>
-        </Container>
-      );
+      return <SplitSection heading={block.heading} body={block.body} narrowHeading />;
 
     case "centered":
       return (

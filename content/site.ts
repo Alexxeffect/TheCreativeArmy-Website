@@ -49,7 +49,7 @@ export const site = {
   },
 
   clients: {
-    heading: "We know who you are",
+    heading: "We know who\nyou are", // "\n" = line break
     body: "You’re ambitious, strong-willed and maybe a bit delusional (we are too). You have a great idea that you really believe in, but it doesn’t look like it just yet. You want to change that. Well that’s why we’re here.",
     lead: "We’ve done it for others like you",
   },

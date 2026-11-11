@@ -9,7 +9,7 @@ export default function Hero() {
         <h1 className="max-w-[91.5%] font-display text-h1 uppercase max-md:max-w-full">
           {site.hero.headline}
         </h1>
-        <p className="mt-[clamp(20px,3.1vw,47px)] max-w-[821px] text-b1">{site.hero.subhead}</p>
+        <p className="mt-[clamp(20px,3.1vw,47px)] max-w-[985px] text-b1">{site.hero.subhead}</p>
       </Container>
     </section>
   );

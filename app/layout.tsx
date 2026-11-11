@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Adobe Fonts kit: provides "redaction" (headlines) and
-            "neue-haas-grotesk-display" (everything else). Same kit as the
+            "neue-haas-grotesk-text" (everything else). Same kit as the
             personal portfolio site. */}
         <link rel="stylesheet" href="https://use.typekit.net/urt4kvy.css" />
       </head>
