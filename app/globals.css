@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Base styles. All sizes, fonts and colours come from tailwind.config.ts
+  (the design tokens) — nothing is hardcoded here except the page defaults.
+*/
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper font-sans text-b3 text-ink antialiased;
+    /* Adobe's Neue Haas Grotesk Display Regular sets ~6% narrower than the
+       version in Figma. +0.02em tracking brings widths within ~1% of the design
+       (measured: "We've done it for others like you" 451px vs Figma 455px).
+       Bold and Redaction already match Figma exactly, so they stay at 0. */
+    letter-spacing: 0.02em;
+  }
+
+  .font-bold,
+  .font-display {
+    letter-spacing: 0;
+  }
+
+  /* Visible keyboard focus everywhere (accessibility). */
+  :focus-visible {
+    outline: 2px solid #ff5100;
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
