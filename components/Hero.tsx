@@ -7,11 +7,11 @@ export default function Hero() {
   return (
     <section className="pb-[clamp(56px,11.5vw,174px)] pt-[clamp(40px,8.3vw,125px)]">
       <Container>
-        {/* max-w is in em (relative to the 110px headline): 10.01em keeps the
-            line break after "DESERVE", as in Figma's 1302px box at 130px. */}
+        {/* Every message is full size; line breaks are set in the content (so
+            the rag is exact), and the box is as tall as the tallest message. */}
         <CyclingHeadline
           messages={[...site.hero.headlines]}
-          className="max-w-[10.01em] font-display text-h1 uppercase max-md:max-w-none"
+          className="font-display text-h1 uppercase"
           lineHeight={1.2}
           holdMs={6000}
         />

@@ -39,7 +39,8 @@ export const site = {
     // The headline cycles through these, word by word (see CyclingHeadline).
     // The first one is what shows on load / with reduced motion.
     headlines: [
-      "Big ideas deserve to look the part",
+      // "\n" = exact line break (tablet/desktop; phones wrap naturally)
+      "Big ideas deserve\nto look the part",
       // "\n" = exact line break (tablet/desktop). This gives the rag:
       //   EMPOWERING THE / VOICES OF THE IDEAS / DEFINING TOMORROW
       "Empowering the\nvoices of the ideas\ndefining tomorrow",

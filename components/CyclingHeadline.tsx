@@ -11,11 +11,12 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
  *    messages, the current words slide UP and out (one after another, a few
  *    milliseconds apart), then the next message's words start below and slide
  *    UP into place.
- *  - THE FIRST MESSAGE SETS THE SIZE. The box is exactly as tall as the first
- *    message. A longer message (more words) doesn't make the box taller — it
- *    gets a smaller font, automatically: the largest size at which it still
- *    fits inside that same height. So whatever sits below the headline never
- *    moves, and the gap to it stays the same for every message.
+ *  - The box is always as tall as the TALLEST message, so whatever sits below
+ *    the headline never moves while the text changes.
+ *  - Optional `shrinkToFit`: instead, THE FIRST MESSAGE SETS THE SIZE. The box
+ *    is exactly as tall as the first message, and a longer message gets a
+ *    smaller font automatically (the largest size at which it still fits that
+ *    height). Every message then leaves the same gap below it.
  *  - Visitors who've asked their device to reduce motion see the first message
  *    and it never changes.
  *
@@ -46,6 +47,10 @@ type Props = {
   flipMs?: number;
   /** Delay between one word starting to flip and the next. */
   staggerMs?: number;
+  /** When true, longer messages shrink to fit the FIRST message's height.
+   *  When false (default), every message keeps full size and the box is as
+   *  tall as the tallest one. */
+  shrinkToFit?: boolean;
   /** Space between words (the font's natural space; Redaction's is 0.25em). */
   wordGap?: string;
   /** Which HTML tag to use. A page headline is "h1". */
@@ -59,6 +64,7 @@ export default function CyclingHeadline({
   holdMs = 6000,
   flipMs = 450,
   staggerMs = 35,
+  shrinkToFit = false,
   wordGap = "0.25em",
   as: Tag = "h1",
 }: Props) {
@@ -91,8 +97,16 @@ export default function CyclingHeadline({
     const recompute = () => {
       const kids = Array.from(measure.children) as HTMLElement[];
       kids.forEach((k) => (k.style.fontSize = "1em"));
-      const base = kids[0].offsetHeight;
+      const heights = kids.map((k) => k.offsetHeight);
 
+      // Default: full size everywhere, box = tallest message.
+      if (!shrinkToFit) {
+        setMinHeight(Math.max(...heights));
+        setScales((prev) => (prev.every((v) => v === 1) ? prev : kids.map(() => 1)));
+        return;
+      }
+
+      const base = heights[0];
       const next = kids.map((kid, i) => {
         if (i === 0) return 1;
         kid.style.fontSize = "1em";
@@ -137,7 +151,7 @@ export default function CyclingHeadline({
       document.fonts.removeEventListener("loadingdone", redo);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages.join("|")]);
+  }, [messages.join("|"), shrinkToFit]);
 
   // Hold on the current message → flip words out → swap to the next message
   // → flip words in → hold again.
