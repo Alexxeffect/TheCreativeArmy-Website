@@ -10,8 +10,17 @@ import type { ReactNode } from "react";
  * Variants (all from the Figma design):
  *  - "brand"   orange fill, white text      (nav "Reach out", email CTA)
  *  - "outline" orange outline, black text   ("Schedule a call")
- *  - "dark"    black fill, white text, turns orange on hover ("View Project")
- *  - "light"   white fill, red text         ("Learn More" on the orange panel)
+ *  - "dark"    black fill, white text, turns orange on hover ("View Project"
+ *              on a white page)
+ *  - "light"   white fill, black text ("View Project" on the black work
+ *              section). On hover the hero gradient's colours rise from the
+ *              bottom edge one after another and the last one, orange, stays
+ *              (see `.btn-rise` in globals.css).
+ *  - "tint"    for a button that sits where the page changes colour ("Learn More"
+ *              in the offer section): white fill + red text while the page is
+ *              orange, orange fill + white text when the page is white. It
+ *              follows <ViewportTint>'s `html[data-tint]`, and is white/red
+ *              without JavaScript (the offer section is then orange).
  *
  * Sizes: "sm" is the nav/offer size, "md" the project-row size, "lg" and "xl"
  * the big final-CTA sizes (xl is the taller one).
@@ -20,14 +29,15 @@ import type { ReactNode } from "react";
  * but is inactive. That's how "Schedule a call" works until a booking link exists.
  */
 
-type Variant = "brand" | "outline" | "dark" | "light";
+type Variant = "brand" | "outline" | "dark" | "light" | "tint";
 type Size = "sm" | "md" | "lg" | "xl";
 
 const variantClass: Record<Variant, string> = {
   brand: "bg-brand text-paper",
   outline: "border-[1.5px] border-brand text-ink",
   dark: "bg-ink text-paper",
-  light: "bg-paper text-trg",
+  light: "btn-rise bg-paper text-ink",
+  tint: "bg-brand text-paper duration-500 [html[data-tint=brand]_&]:bg-paper [html[data-tint=brand]_&]:text-trg [@media(scripting:none)]:bg-paper [@media(scripting:none)]:text-trg",
 };
 
 // What each variant does on hover (only for buttons that go somewhere). The
@@ -36,7 +46,9 @@ const hoverClass: Record<Variant, string> = {
   brand: "hover:opacity-85",
   outline: "hover:opacity-85",
   dark: "hover:bg-brand",
-  light: "hover:opacity-85",
+  // the text turns white as the first dark band reaches it
+  light: "hover:text-paper hover:delay-[120ms] hover:duration-150",
+  tint: "hover:opacity-85",
 };
 
 const sizeClass: Record<Size, string> = {
@@ -56,14 +68,24 @@ type Props = {
   className?: string;
 };
 
-export default function Button({ href, variant, size, children, className = "" }: Props) {
-  const base = `inline-flex items-center justify-center whitespace-nowrap transition-[opacity,background-color] duration-200 ${variantClass[variant]} ${sizeClass[size]} ${className}`;
+export default function Button({
+  href,
+  variant,
+  size,
+  children,
+  className = "",
+}: Props) {
+  const base = `inline-flex items-center justify-center whitespace-nowrap transition-[opacity,background-color,color] duration-200 ${variantClass[variant]} ${sizeClass[size]} ${className}`;
   const classes = `${base} ${hoverClass[variant]}`;
 
   if (!href) {
     // Inactive: no destination yet. aria-disabled tells screen readers.
     return (
-      <span role="link" aria-disabled="true" className={`${base} cursor-default`}>
+      <span
+        role="link"
+        aria-disabled="true"
+        className={`${base} cursor-default`}
+      >
         {children}
       </span>
     );

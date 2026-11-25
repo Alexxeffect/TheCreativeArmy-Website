@@ -41,7 +41,7 @@ export type Project = {
   /** Which tile is the wide one: left, or right (TRG's row is mirrored). */
   wideTile: "left" | "right";
   tiles: [Tile, Tile, Tile];
-  /** ⚠ Hydrowells has no case study yet, so it has no "View Project" button. */
+  /** ⚠ Hydrowells has no case study yet, so its "View Project" button is inactive. Set to true once its case study exists. */
   hasCaseStudy: boolean;
 };
 

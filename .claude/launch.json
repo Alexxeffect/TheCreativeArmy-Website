@@ -4,8 +4,23 @@
     {
       "name": "thecreativearmy-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3000
+    },
+    {
+      "name": "water-prototype",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "3100",
+        "--directory",
+        "prototypes/water-gradient"
+      ],
+      "port": 3100
     }
   ]
 }

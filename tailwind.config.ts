@@ -24,11 +24,22 @@ const config: Config = {
         ink: "#000000", // text on white
         paper: "#FFFFFF", // page background
         trg: "#FF0000", // TRG's red; used for the "Learn More" label + TRG card backdrops
-        muted: "#C7C7C7", // secondary text on orange (testimonial role)
-        placeholder: "#D9D9D9", // empty image slots + avatar circles
+        placeholder: "#D9D9D9", // empty image slots
         surface: "#F2F2F2", // case study page background (TRG)
+        wine: "#700F05", // deep red behind the two decorative cards in "Why work with us?"
+      },
+      backgroundImage: {
+        // The landing page's red-to-black fade (Figma "Gradient 3"): red at the
+        // top, through orange and deep red, to black at the bottom. Used behind
+        // the hero and behind testimonials + closing call to action.
+        fade: "linear-gradient(to top, #000000 0.19%, #360500 16.48%, #B73003 34.2%, #FF5100 61.02%, #FC0000 99.82%)",
       },
       fontFamily: {
+        // Blackletter used for the wordmark at the top of the landing page
+        // (Google font, loaded in app/layout.tsx)
+        fraktur: ["var(--font-fraktur)", "serif"],
+        // CS Aither: the "A" in the wordmark (local file, loaded in app/layout.tsx)
+        aither: ["var(--font-aither)", "serif"],
         // Adobe Fonts kit urt4kvy (loaded in app/layout.tsx)
         display: ["redaction", "serif"], // headlines + wordmark
         sans: ["neue-haas-grotesk-text", "sans-serif"], // everything else (Text cut, same as the portfolio site)
@@ -36,7 +47,11 @@ const config: Config = {
       fontSize: {
         // Redaction (headlines). All uppercase at call sites.
         h1: ["clamp(48px, 7.275vw, 110px)", { lineHeight: "1.2" }], // hero only (110px; Figma frame had 130px)
+        hero: ["clamp(40px, 9.34vw, 141px)", { lineHeight: "1.2" }], // landing hero headline (141px in the updated Figma frame)
         h2: ["clamp(36px, 4.63vw, 70px)", { lineHeight: "1.2" }], // section headlines
+        h3: ["clamp(30px, 2.98vw, 45px)", { lineHeight: "1.2" }], // 45px: "Trusted by", card titles
+        "quote-lg": ["clamp(20px, 2.646vw, 40px)", { lineHeight: "1.2" }], // 40px: the testimonial quote (Neue Haas, body font)
+        mark: ["clamp(22px, 1.984vw, 30px)", { lineHeight: "1.2" }], // landing wordmark: 30px on desktop
         cta: ["clamp(32px, 4.96vw, 75px)", { lineHeight: "1.2" }], // 75px: closing call-to-action headline
         wordmark: ["clamp(24px, 8.7vw, 132px)", { lineHeight: "1.2" }], // giant footer wordmark
         "wordmark-nav": ["clamp(18px, 1.65vw, 25px)", { lineHeight: "1.2" }], // nav wordmark
@@ -61,7 +76,10 @@ const config: Config = {
       },
       keyframes: {
         // Logo carousel: slide left by exactly one copy of the logo list.
-        marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         marquee: "marquee 31.65s linear infinite", // was 40s; +10% then +15% faster

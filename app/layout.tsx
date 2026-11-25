@@ -1,7 +1,25 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
+import { UnifrakturMaguntia } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { site } from "@/content/site";
+
+// Blackletter for the landing page wordmark (Tailwind: `font-fraktur`).
+const fraktur = UnifrakturMaguntia({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-fraktur",
+  display: "swap",
+});
+
+// CS Aither Regular: used for just the "A" of the wordmark (Tailwind:
+// `font-aither`). The file is in app/fonts.
+const aither = localFont({
+  src: "./fonts/CSAither-Regular.otf",
+  variable: "--font-aither",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   // ⚠ [placeholder] title/description: draft copy until Alex confirms.
@@ -15,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${fraktur.variable} ${aither.variable}`}>
       <head>
         {/* Adobe Fonts kit: provides "redaction" (headlines) and
             "neue-haas-grotesk-text" (everything else). Same kit as the

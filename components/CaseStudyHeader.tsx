@@ -28,7 +28,7 @@ export default function CaseStudyHeader({ study }: { study: CaseStudy }) {
 
         <div>
           <h1 className="font-display text-h2">{study.title}</h1>
-          <div className="mt-[clamp(16px,1.6vw,24px)] max-w-[821px] space-y-[1.2em] text-b1 lg:ml-[0.5%]">
+          <div className="mt-[clamp(16px,1.6vw,24px)] max-w-[27.4em] space-y-[1.2em] text-b3 lg:ml-[0.5%]">
             {study.intro.map((p) => (
               <p key={p}>{p}</p>
             ))}

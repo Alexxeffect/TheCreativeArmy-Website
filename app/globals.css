@@ -7,6 +7,12 @@
   (the design tokens) — nothing is hardcoded here except the page defaults.
 */
 @layer base {
+  :root {
+    /* Empty space at the top of the "Our offer" section. Shared, because the
+       "We know who you are" section's bottom spacing is worked out from it. */
+    --offer-pad-top: clamp(56px, 12vw, 182px);
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
@@ -14,6 +20,39 @@
 
   body {
     @apply bg-paper font-sans text-b3 text-ink antialiased;
+    /* The page colour (and text colour) fade when <ViewportTint> switches it
+       (see below). */
+    transition:
+      background-color 500ms cubic-bezier(0.4, 0, 0.2, 1),
+      color 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* While the "Our offer" section is on screen the whole page turns orange,
+     and any text that shows up on it (that doesn't set its own colour) turns
+     white. */
+  html[data-tint="brand"] body {
+    @apply bg-brand text-paper;
+  }
+
+  /* Client logos: black on white, and they turn white along with the page
+     while it is orange. They are transparent images, so a filter does it
+     (no separate white files needed). Fades with the same timing as the page. */
+  .logo-mark {
+    transition: filter 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .logo-mark-from-white {
+    filter: brightness(0); /* this logo's file is white; start from black */
+  }
+  html[data-tint="brand"] .logo-mark {
+    filter: brightness(0) invert(1);
+  }
+
+  /* No JavaScript, no page-colour change: give "Our offer" its own orange so
+     its white text can still be read. */
+  @media (scripting: none) {
+    #offer {
+      @apply bg-brand;
+    }
   }
 
   /* Visible keyboard focus everywhere (accessibility). */
@@ -25,6 +64,408 @@
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
+    }
+    body,
+    .logo-mark {
+      transition: none;
+    }
+  }
+}
+
+/*
+  Entry animation for the landing hero (see components/Hero.tsx).
+
+  1. The gradient rises in from the bottom of the window. It is one tall
+     picture (2.6 screens): solid black on top, then a soft ramp from black up
+     into red, then the finished gradient (red at its top, black at its
+     bottom, same stops as `fade` in tailwind.config.ts). The picture starts
+     with only its black part in the window and slides UP, so the red comes
+     up from the very bottom edge, followed by orange, dark red and black,
+     and settles with the finished gradient filling the window.
+  2. Things that come in AFTER the gradient (wordmark, headline, subhead) wait
+     invisibly for `--hero-delay`, then fade in slowly (opacity only).
+
+  Both are plain CSS, so they play without JavaScript. With "reduce motion"
+  switched on, everything simply shows in its final state.
+*/
+/* Numbers the "View Project" hover animates (see .btn-rise). Registered so the
+   browser can slide them smoothly. */
+@property --rise-1 {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+@property --rise-2 {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+@property --rise-3 {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+@property --rise-4 {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+@layer components {
+  .hero-gradient {
+    background-image: linear-gradient(
+      to bottom,
+      /* part 1 (0-1 screen): solid black */ #000000 0%,
+      #000000 38.46%,
+      /* part 2 (0.6 screen): eased ramp from black into red */ #270000 44.23%,
+      #7e0000 50%,
+      #d50000 55.77%,
+      /* part 3 (1 screen): the finished gradient */ #fc0000 61.54%,
+      #ff5100 76.53%,
+      #b73003 86.85%,
+      #360500 93.66%,
+      #000000 99.93%
+    );
+    background-size: 100% 260%;
+    background-position: 50% 100%; /* final: the last screen of the picture */
+    animation: hero-gradient-rise 4600ms cubic-bezier(0.65, 0, 0.25, 1) both;
+  }
+
+  /* "View Project" hover (Button variant "light"): the hero gradient's colours
+     come up from the bottom edge one after another, each one a band that
+     covers the one before it: deep brown, rust, red, and last the orange the
+     button settles on. Four layers, each a picture 3 buttons tall (clear on
+     top, a long soft ramp, then solid colour), slid up by its own `--rise-N` value
+     (0% = out of sight below, 100% = covering the button). The staggering is
+     in the transition delays below. */
+  .btn-rise {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .btn-rise::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    /* Top layer first: orange arrives last, so it is on top. Each layer is
+       clear on its top third, then eases into its colour over the middle
+       third (a full button height), so the leading edge is a long soft blur,
+       never a hard line, and is solid on the bottom third. */
+    background-image:
+      linear-gradient(
+        to bottom,
+        rgba(255, 81, 0, 0) 0%,
+        rgba(255, 81, 0, 0) 33.33%,
+        rgba(255, 81, 0, 0.04) 37.5%,
+        rgba(255, 81, 0, 0.16) 41.66%,
+        rgba(255, 81, 0, 0.32) 45.83%,
+        rgba(255, 81, 0, 0.5) 50%,
+        rgba(255, 81, 0, 0.68) 54.17%,
+        rgba(255, 81, 0, 0.84) 58.34%,
+        rgba(255, 81, 0, 0.96) 62.5%,
+        rgba(255, 81, 0, 1) 66.67%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(252, 0, 0, 0) 0%,
+        rgba(252, 0, 0, 0) 33.33%,
+        rgba(252, 0, 0, 0.04) 37.5%,
+        rgba(252, 0, 0, 0.16) 41.66%,
+        rgba(252, 0, 0, 0.32) 45.83%,
+        rgba(252, 0, 0, 0.5) 50%,
+        rgba(252, 0, 0, 0.68) 54.17%,
+        rgba(252, 0, 0, 0.84) 58.34%,
+        rgba(252, 0, 0, 0.96) 62.5%,
+        rgba(252, 0, 0, 1) 66.67%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(183, 48, 3, 0) 0%,
+        rgba(183, 48, 3, 0) 33.33%,
+        rgba(183, 48, 3, 0.04) 37.5%,
+        rgba(183, 48, 3, 0.16) 41.66%,
+        rgba(183, 48, 3, 0.32) 45.83%,
+        rgba(183, 48, 3, 0.5) 50%,
+        rgba(183, 48, 3, 0.68) 54.17%,
+        rgba(183, 48, 3, 0.84) 58.34%,
+        rgba(183, 48, 3, 0.96) 62.5%,
+        rgba(183, 48, 3, 1) 66.67%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(54, 5, 0, 0) 0%,
+        rgba(54, 5, 0, 0) 33.33%,
+        rgba(54, 5, 0, 0.04) 37.5%,
+        rgba(54, 5, 0, 0.16) 41.66%,
+        rgba(54, 5, 0, 0.32) 45.83%,
+        rgba(54, 5, 0, 0.5) 50%,
+        rgba(54, 5, 0, 0.68) 54.17%,
+        rgba(54, 5, 0, 0.84) 58.34%,
+        rgba(54, 5, 0, 0.96) 62.5%,
+        rgba(54, 5, 0, 1) 66.67%
+      );
+    background-size: 100% 300%;
+    background-repeat: no-repeat;
+    background-position:
+      50% var(--rise-4),
+      50% var(--rise-3),
+      50% var(--rise-2),
+      50% var(--rise-1);
+    /* Letting go: everything slides back down together. */
+    transition:
+      --rise-1 450ms cubic-bezier(0.4, 0, 0.2, 1),
+      --rise-2 450ms cubic-bezier(0.4, 0, 0.2, 1),
+      --rise-3 450ms cubic-bezier(0.4, 0, 0.2, 1),
+      --rise-4 450ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-rise:hover::before {
+    --rise-1: 100%;
+    --rise-2: 100%;
+    --rise-3: 100%;
+    --rise-4: 100%;
+    /* Each colour starts 90ms after the one before it. */
+    transition:
+      --rise-1 520ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,
+      --rise-2 520ms cubic-bezier(0.4, 0, 0.2, 1) 90ms,
+      --rise-3 520ms cubic-bezier(0.4, 0, 0.2, 1) 180ms,
+      --rise-4 520ms cubic-bezier(0.4, 0, 0.2, 1) 270ms;
+  }
+
+  .hero-wait {
+    opacity: 0;
+    animation: hero-show 3200ms cubic-bezier(0.7, 0, 0.3, 1)
+      var(--hero-delay, 0ms) forwards;
+  }
+
+  /* Use WITH .hero-wait: as well as fading in, the element floats up from
+     below by `--hero-rise`, like the gradient did, and settles in place. */
+  .hero-lift {
+    animation:
+      hero-show 3200ms cubic-bezier(0.7, 0, 0.3, 1) var(--hero-delay, 0ms)
+        forwards,
+      hero-lift 3200ms cubic-bezier(0.25, 0.6, 0.2, 1) var(--hero-delay, 0ms)
+        both;
+  }
+}
+
+@keyframes hero-gradient-rise {
+  from {
+    background-position: 50% 0%; /* the first screen of the picture: all black */
+  }
+  to {
+    background-position: 50% 100%; /* the last screen: the finished gradient */
+  }
+}
+
+@keyframes hero-lift {
+  from {
+    transform: translateY(var(--hero-rise, 60px));
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes hero-show {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-gradient {
+    animation: none;
+  }
+  .hero-wait,
+  .hero-lift {
+    opacity: 1;
+    animation: none;
+  }
+  .btn-rise::before,
+  .btn-rise:hover::before {
+    transition: none;
+  }
+}
+
+/*
+  "Why work with us?" cards (components/WhyCards.tsx). A card opens in three
+  steps and closes in the reverse order:
+    1. the card opens to its full width with its picture full bleed;
+    2. the picture's container compresses, leaving room for the words;
+    3. the words appear.
+  Closing: the words go, the container grows back to full bleed, then the card
+  narrows to a strip.
+
+  When one card is clicked the open one closes first, then the two swap widths
+  together, then the new one compresses and shows its words. So each state has
+  its own delays: the timings below are the numbers to change.
+*/
+@layer components {
+  .why-row {
+    --pad: clamp(
+      12px,
+      1.39vw,
+      21px
+    ); /* space around the picture when it is a window */
+    --ease: cubic-bezier(0.65, 0, 0.25, 1);
+    --text-out: 250ms; /* closing: the words fade away */
+    --expand-delay: 100ms; /* closing: then the picture grows back to full bleed... */
+    --expand: 500ms;
+    --swap-delay: 600ms; /* ...then both cards swap widths */
+    --swap: 700ms;
+    --compress-delay: calc(
+      var(--swap-delay) + var(--swap)
+    ); /* opening: once the swap has landed the picture compresses... */
+    --compress: 600ms;
+    --text-delay: calc(
+      var(--compress-delay) + var(--compress) - 150ms
+    ); /* ...then the words appear */
+    --text: 450ms;
+  }
+
+  /* ---- Phone (stacked): no choreography, just the open card showing its window + words ---- */
+  .why-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #ff5100;
+  }
+  .why-card[data-open="false"] {
+    height: clamp(120px, 32vw, 160px);
+  }
+  .why-strip {
+    position: absolute;
+    inset: 0;
+  }
+  .why-card[data-open="true"] .why-strip {
+    opacity: 0;
+  }
+  .why-card[data-open="false"] .why-face {
+    display: none;
+  }
+  .why-face {
+    /* Size of the picture window, and where its top-left corner sits inside the
+       artwork's coordinate space (0 when the artwork IS the window). */
+    --ww: calc(100cqw - 2 * var(--pad));
+    --wh: calc(var(--ww) * 0.50706); /* 779 x 395 in Figma */
+    --ox: 0px;
+    --oy: 0px;
+    padding: var(--pad) var(--pad) clamp(24px, 2.85vw, 43px);
+  }
+  .why-art {
+    position: relative;
+    height: var(--wh);
+    overflow: hidden;
+    border-radius: 18px;
+  }
+  .why-text {
+    padding: clamp(24px, 3vw, 45px) clamp(8px, 1.3vw, 20px) 0;
+  }
+
+  /* ---- Desktop: cards in a row, with the three-step choreography ---- */
+  @media (min-width: 768px) {
+    .why-card {
+      flex: 0 1 0%;
+      min-width: 0;
+      height: auto !important;
+      transition: flex-grow var(--swap) var(--ease) var(--swap-delay);
+    }
+    .why-card[data-open="true"] {
+      flex-grow: 821;
+    }
+    .why-card[data-open="false"] {
+      flex-grow: 282;
+    }
+
+    /* No separate strip artwork on desktop: a closed card shows a crop of the
+       open card's own picture (see .why-face), so there is no cross-fade. */
+    .why-strip {
+      display: none;
+    }
+
+    /* The open face is always laid out at the full open width, so nothing
+       re-wraps while the card changes width. */
+    .why-card[data-open] .why-face {
+      display: block;
+    }
+    .why-face {
+      /* Centred in the card: as the card narrows or widens, the picture stays
+         put and the card's edges close in on it / open out from it. */
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 0;
+      height: 100%;
+      width: var(--open-w);
+      padding: 0;
+      --ww: calc(var(--open-w) - 2 * var(--pad));
+      --ox: var(--pad);
+      --oy: var(--pad);
+    }
+    .why-card[data-open="false"] .why-face {
+      pointer-events: none;
+    }
+    /* A card that shows the right-hand slice of its picture when closed. */
+    .why-card[data-crop="right"] .why-face {
+      left: auto;
+      right: 0;
+      transform: none;
+    }
+
+    /* The picture: a card-sized layer, clipped. Step 1 shows it full bleed;
+       step 2 closes the clip in to the picture window (rounded, inset). */
+    .why-art {
+      position: absolute;
+      inset: 0;
+      height: auto;
+      overflow: visible;
+      border-radius: 0;
+    }
+    .why-card[data-open="true"] .why-art {
+      opacity: 1;
+      clip-path: inset(
+        var(--pad) var(--pad) calc(100% - var(--pad) - var(--wh)) var(--pad)
+          round 18px
+      );
+      transition: clip-path var(--compress) var(--ease) var(--compress-delay);
+    }
+    .why-card[data-open="false"] .why-art {
+      opacity: 1;
+      clip-path: inset(0 0 0 0 round 0px);
+      transition: clip-path var(--expand) var(--ease) var(--expand-delay);
+    }
+
+    /* Step 3: the words, just below the picture window. */
+    .why-text {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(var(--oy) + var(--wh) + clamp(24px, 3vw, 45px));
+      padding: 0 calc(var(--pad) + clamp(8px, 1.3vw, 20px));
+    }
+    .why-card[data-open="true"] .why-text {
+      opacity: 1;
+      transform: none;
+      transition:
+        opacity var(--text) ease var(--text-delay),
+        transform var(--text) cubic-bezier(0.25, 0.6, 0.2, 1) var(--text-delay);
+    }
+    .why-card[data-open="false"] .why-text {
+      opacity: 0;
+      transform: translateY(18px);
+      transition:
+        opacity var(--text-out) ease 0ms,
+        transform var(--text-out) ease 0ms;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .why-card,
+    .why-strip,
+    .why-art,
+    .why-text {
+      transition: none !important;
     }
   }
 }

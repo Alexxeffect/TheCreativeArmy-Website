@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Water gradient prototype</title>
+<!--
+  WATER GRADIENT: a standalone prototype (not part of the Next.js site).
+
+  The hero's red-to-black gradient is drawn by a WebGL shader instead of CSS.
+  Moving the pointer drops "pebbles"; each one sends out a ring of ripples that
+  bends the gradient (like looking through water) and catches the light.
+
+  It also plays the same entry as the site: the red rises from the bottom, then
+  the wordmark, headline and subhead fade in.
+
+  Keys: H = hide/show the tuning panel, R = replay the entry.
+  Run it with:  python3 -m http.server 3100 --directory prototypes/water-gradient
+-->
+<link rel="stylesheet" href="https://use.typekit.net/urt4kvy.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet" />
+<style>
+  @font-face {
+    font-family: "CS Aither";
+    src: url("CSAither-Regular.otf") format("opentype");
+  }
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  body { font-family: "neue-haas-grotesk-text", system-ui, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+
+  /* The shader draws here, behind everything. */
+  #gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+  /* If WebGL isn't available: the plain CSS gradient (same stops as the site). */
+  .no-gl body {
+    background: linear-gradient(to top, #000 0.19%, #360500 16.48%, #b73003 34.2%, #ff5100 61.02%, #fc0000 99.82%);
+  }
+  .no-gl #gl { display: none; }
+
+  /* ---- Hero text: a copy of the site's hero, for judging how it sits on the water ---- */
+  .hero { position: relative; z-index: 1; min-height: 100vh; padding: clamp(80px, 12.04vw, 182px) 20px 40px clamp(20px, 4.17vw, 63px); pointer-events: none; }
+  .hero.hidden { display: none; }
+  .mark { position: absolute; top: 20px; left: 0; right: 0; text-align: center; font-family: "UnifrakturMaguntia", serif; font-size: clamp(22px, 1.984vw, 30px); line-height: 1.2; }
+  .mark .a { font-family: "CS Aither", serif; }
+  h1 { margin: 0; font-family: "redaction", serif; font-weight: 400; font-size: clamp(40px, 9.34vw, 141px); line-height: 1.2; text-transform: uppercase; white-space: pre-line; max-width: 1512px; }
+  .sub { margin: 17px 0 0; font-size: clamp(18px, 1.65vw, 25px); line-height: 1.2; max-width: 435px; }
+  @media (min-width: 768px) { .sub { margin-left: 65.4%; } }
+
+  .hero-wait { opacity: 0; animation: show 3200ms cubic-bezier(0.7, 0, 0.3, 1) var(--delay, 0ms) forwards; }
+  .hero-lift { animation: show 3200ms cubic-bezier(0.7, 0, 0.3, 1) var(--delay, 0ms) forwards,
+                          lift 3200ms cubic-bezier(0.25, 0.6, 0.2, 1) var(--delay, 0ms) both; }
+  @keyframes show { to { opacity: 1; } }
+  @keyframes lift { from { transform: translateY(var(--rise, 60px)); } to { transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .hero-wait, .hero-lift { opacity: 1; animation: none; } }
+
+  /* ---- Tuning panel ---- */
+  #panel { position: fixed; z-index: 5; right: 12px; bottom: 12px; width: 268px; padding: 12px 14px; border-radius: 10px;
+           background: rgba(0,0,0,.62); backdrop-filter: blur(8px); font-size: 12px; line-height: 1.3; }
+  #panel.hidden { display: none; }
+  #panel h2 { margin: 0 0 8px; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; opacity: .8; }
+  #panel label { display: grid; grid-template-columns: 92px 1fr 40px; align-items: center; gap: 8px; margin: 5px 0; }
+  #panel output { text-align: right; opacity: .7; font-variant-numeric: tabular-nums; }
+  #panel input[type=range] { width: 100%; accent-color: #ff5100; }
+  #panel .row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+  #panel button { font: inherit; color: #fff; background: #ff5100; border: 0; border-radius: 5px; padding: 6px 10px; cursor: pointer; }
+  #panel button.ghost { background: rgba(255,255,255,.14); }
+  #panel .hint { margin-top: 8px; opacity: .6; }
+</style>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<main class="hero" id="hero">
+  <div class="mark hero-wait" style="--delay: 2000ms">TheCreative<span class="a">A</span>rmy</div>
+  <h1 class="hero-wait hero-lift" style="--delay: 2400ms; --rise: 80px">Big ideas deserve
+to look the part</h1>
+  <p class="sub hero-wait hero-lift" style="--delay: 3400ms; --rise: 32px">We are a brand design studio working with founders whose ideas have scaled faster than their brands.</p>
+</main>
+
+<aside id="panel" aria-label="Tuning">
+  <h2>Water tuning</h2>
+  <div id="sliders"></div>
+  <div class="row">
+    <button id="replay">Replay entry (R)</button>
+    <button id="toggleText" class="ghost">Text on/off (T)</button>
+  </div>
+  <div class="row"><label style="display:flex;gap:6px;margin:0"><input type="checkbox" id="rain" /> idle raindrops</label></div>
+  <div class="hint">Move over the gradient. H hides this panel.</div>
+</aside>
+
+<script>
+(() => {
+  /* -------------------------------------------------------------- */
+  /* Settings (the sliders edit these live)                         */
+  /* Distances are in "window heights": 1 = the full height.        */
+  /* -------------------------------------------------------------- */
+  const P = {
+    strength: 1.4,     // overall size of the ripples
+    speed: 0.20,       // how fast a ring spreads (window heights per second)
+    wavelength: 0.055, // distance between rings
+    width: 0.075,      // how many rings you see in one pulse
+    decay: 0.5,        // how quickly a pulse fades (higher = shorter)
+    refract: 0.0006,   // how much the water bends the gradient
+    shine: 1.6,        // light glinting off the ripples
+    spacing: 46,       // px the pointer travels between pebbles
+    scale: 1.0,        // render resolution (lower = faster)
+  };
+  const SLIDERS = [
+    ["strength", "Strength", 0, 2.5, 0.01],
+    ["speed", "Ring speed", 0.05, 0.6, 0.01],
+    ["wavelength", "Wavelength", 0.02, 0.18, 0.002],
+    ["width", "Pulse width", 0.02, 0.3, 0.005],
+    ["decay", "Fade-out", 0.1, 2.5, 0.05],
+    ["refract", "Bend", 0, 0.0012, 0.00002],
+    ["shine", "Shine", 0, 2.5, 0.05],
+    ["spacing", "Pebble gap px", 12, 140, 2],
+    ["scale", "Resolution", 0.4, 1.5, 0.05],
+  ];
+
+  /* -------------------------------------------------------------- */
+  /* WebGL setup                                                    */
+  /* -------------------------------------------------------------- */
+  const canvas = document.getElementById("gl");
+  const gl = canvas.getContext("webgl", { antialias: false, alpha: false, powerPreference: "high-performance" });
+  if (!gl) { document.documentElement.classList.add("no-gl"); return; }
+
+  const MAX_DROPS = 32;
+
+  const vs = `attribute vec2 a; void main(){ gl_Position = vec4(a, 0.0, 1.0); }`;
+
+  const fs = `
+  precision highp float;
+  uniform vec2  uRes;
+  uniform float uTime;
+  uniform float uRise;            // eased entry progress, 0..1
+  uniform sampler2D uRamp;        // the gradient picture, top to bottom
+  uniform vec4  uDrops[${MAX_DROPS}];  // x, y (window heights, y down), birth time, strength
+  uniform float uSpeed, uK, uWidth, uDecay, uRefract, uShine, uStrength;
+
+  // One pebble's ripples: returns (height, d/dx, d/dy) at point p.
+  vec3 ripples(vec2 p) {
+    vec3 acc = vec3(0.0);
+    for (int i = 0; i < ${MAX_DROPS}; i++) {
+      vec4 d = uDrops[i];
+      float age = uTime - d.z;
+      if (age < 0.0 || age > 7.0) continue;
+      vec2 v = p - d.xy;
+      float r = length(v);
+      float s = r - uSpeed * age;              // distance from the moving ring front
+      float env = exp(-(s * s) / (uWidth * uWidth));
+      float life = exp(-uDecay * age) * smoothstep(0.0, 0.12, age);
+      float spread = 1.0 / sqrt(1.0 + r * 9.0); // energy thins out as the ring widens
+      float a = d.w * uStrength * life * spread;
+      float ph = uK * s;
+      float h = a * env * sin(ph);
+      float dh = a * env * (uK * cos(ph) - (2.0 * s / (uWidth * uWidth)) * sin(ph));
+      vec2 dir = v / max(r, 1e-4);
+      acc += vec3(h, dh * dir);
+    }
+    return acc;
+  }
+
+  float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+
+  void main() {
+    // Position in window heights, y going DOWN from the top of the window.
+    vec2 p = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y) / uRes.y;
+
+    vec3 rp = ripples(p);
+    vec2 g = rp.yz;                              // slope of the water
+
+    // Look through the water: shift where we read the gradient from.
+    vec2 q = p + g * uRefract;
+
+    // The gradient picture is 2.6 windows tall and slides up as uRise goes 0 -> 1
+    // (the same entry as the site's CSS).
+    float t = clamp((q.y + 1.6 * uRise) / 2.6, 0.0, 1.0);
+    vec3 col = texture2D(uRamp, vec2(t, 0.5)).rgb;
+
+    // Light on the surface: from the top left.
+    vec3 n = normalize(vec3(-g * 0.0022, 1.0));
+    vec3 L = normalize(vec3(-0.45, -0.55, 0.70));
+    vec3 Hh = normalize(L + vec3(0.0, 0.0, 1.0));
+    float diff = dot(n, L) - L.z;                // 0 on flat water
+    float spec = pow(max(dot(n, Hh), 0.0), 70.0);
+    float lum = dot(col, vec3(0.30, 0.59, 0.11));
+    col += diff * uShine * 0.9 * (0.25 + lum);
+    col += spec * uShine * vec3(1.0, 0.72, 0.55) * (0.35 + lum);
+
+    // Tiny noise so the dark part of the gradient doesn't band.
+    col += (hash(gl_FragCoord.xy + fract(uTime)) - 0.5) / 255.0;
+    gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+  }`;
+
+  function compile(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(s));
+      throw new Error("Shader failed to compile");
+    }
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+  gl.useProgram(prog);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, "a");
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+  const U = {};
+  ["uRes", "uTime", "uRise", "uRamp", "uDrops", "uSpeed", "uK", "uWidth", "uDecay", "uRefract", "uShine", "uStrength"]
+    .forEach((n) => (U[n] = gl.getUniformLocation(prog, n)));
+
+  /* The gradient picture: the site's hero CSS, 2.6 windows tall, black on top,
+     a soft ramp into red, then the finished gradient. Drawn once on a small
+     canvas and used as a texture. */
+  const rampCanvas = document.createElement("canvas");
+  rampCanvas.width = 1024; rampCanvas.height = 1;
+  const rctx = rampCanvas.getContext("2d");
+  const grad = rctx.createLinearGradient(0, 0, 1024, 0);
+  [
+    [0, "#000000"], [0.3846, "#000000"],
+    [0.4423, "#270000"], [0.5, "#7e0000"], [0.5577, "#d50000"],
+    [0.6154, "#fc0000"], [0.7653, "#ff5100"], [0.8685, "#b73003"], [0.9366, "#360500"], [0.9993, "#000000"],
+  ].forEach(([o, c]) => grad.addColorStop(o, c));
+  rctx.fillStyle = grad; rctx.fillRect(0, 0, 1024, 1);
+
+  const tex = gl.createTexture();
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, rampCanvas);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.uniform1i(U.uRamp, 0);
+
+  /* -------------------------------------------------------------- */
+  /* Sizing                                                         */
+  /* -------------------------------------------------------------- */
+  let W = 1, H = 1;   // window size in CSS px
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2) * P.scale;
+    canvas.width = Math.max(1, Math.round(W * dpr));
+    canvas.height = Math.max(1, Math.round(H * dpr));
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  window.addEventListener("resize", resize);
+
+  /* -------------------------------------------------------------- */
+  /* Entry: the same 4.6 s rise as the site (cubic-bezier .65,0,.25,1) */
+  /* -------------------------------------------------------------- */
+  function bezier(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    const X = (t) => ((ax * t + bx) * t + cx) * t;
+    const Y = (t) => ((ay * t + by) * t + cy) * t;
+    return (x) => {
+      let lo = 0, hi = 1, t = x;
+      for (let i = 0; i < 30; i++) { const v = X(t); if (Math.abs(v - x) < 1e-5) break; if (v < x) lo = t; else hi = t; t = (lo + hi) / 2; }
+      return Y(t);
+    };
+  }
+  const ease = bezier(0.65, 0, 0.25, 1);
+  const ENTRY_MS = 4600;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let entryStart = performance.now();
+
+  /* -------------------------------------------------------------- */
+  /* Pebbles                                                        */
+  /* -------------------------------------------------------------- */
+  const drops = new Float32Array(MAX_DROPS * 4);
+  for (let i = 0; i < MAX_DROPS; i++) drops[i * 4 + 2] = -1000;   // not born yet
+  let next = 0;
+  const now = () => performance.now() / 1000;
+
+  function drop(xpx, ypx, strength) {
+    const i = next++ % MAX_DROPS;
+    drops[i * 4] = xpx / H;      // x and y both in window heights
+    drops[i * 4 + 1] = ypx / H;
+    drops[i * 4 + 2] = now();
+    drops[i * 4 + 3] = strength;
+  }
+
+  let last = null;   // last pebble: {x, y, t}
+  window.addEventListener("pointermove", (e) => {
+    const t = performance.now();
+    if (!last) { last = { x: e.clientX, y: e.clientY, t }; drop(e.clientX, e.clientY, 0.8); return; }
+    const dist = Math.hypot(e.clientX - last.x, e.clientY - last.y);
+    if (dist < P.spacing) return;
+    const speed = dist / Math.max(1, t - last.t);        // px per ms
+    drop(e.clientX, e.clientY, Math.min(1.6, 0.85 + speed * 0.5));
+    last = { x: e.clientX, y: e.clientY, t };
+  });
+  window.addEventListener("pointerdown", (e) => { drop(e.clientX, e.clientY, 2.0); last = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+
+  // Optional: a drop every so often even when nobody is touching it.
+  const rain = document.getElementById("rain");
+  setInterval(() => { if (rain.checked) drop(Math.random() * W, Math.random() * H, 0.6 + Math.random() * 0.6); }, 1400);
+
+  /* -------------------------------------------------------------- */
+  /* Draw loop                                                      */
+  /* -------------------------------------------------------------- */
+  function frame() {
+    const rise = reduceMotion ? 1 : ease(Math.min(1, (performance.now() - entryStart) / ENTRY_MS));
+    gl.uniform2f(U.uRes, canvas.width, canvas.height);
+    gl.uniform1f(U.uTime, now());
+    gl.uniform1f(U.uRise, rise);
+    gl.uniform4fv(U.uDrops, drops);
+    gl.uniform1f(U.uSpeed, P.speed);
+    gl.uniform1f(U.uK, (Math.PI * 2) / P.wavelength);
+    gl.uniform1f(U.uWidth, P.width);
+    gl.uniform1f(U.uDecay, P.decay);
+    gl.uniform1f(U.uRefract, P.refract);
+    gl.uniform1f(U.uShine, P.shine);
+    gl.uniform1f(U.uStrength, P.strength);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(frame);
+  }
+
+  /* -------------------------------------------------------------- */
+  /* Panel + keys                                                   */
+  /* -------------------------------------------------------------- */
+  const box = document.getElementById("sliders");
+  SLIDERS.forEach(([key, label, min, max, step]) => {
+    const row = document.createElement("label");
+    const out = document.createElement("output");
+    const input = document.createElement("input");
+    input.type = "range"; input.min = min; input.max = max; input.step = step; input.value = P[key];
+    const show = () => (out.textContent = Number(P[key]).toPrecision(key === "refract" ? 2 : 3).replace(/\.?0+$/, ""));
+    input.addEventListener("input", () => { P[key] = parseFloat(input.value); show(); if (key === "scale") resize(); });
+    row.append(label, input, out); box.append(row); show();
+  });
+
+  function replay() {
+    entryStart = performance.now();
+    const hero = document.getElementById("hero");
+    hero.classList.add("hidden"); void hero.offsetHeight; hero.classList.remove("hidden");   // restarts the text fades
+  }
+  document.getElementById("replay").addEventListener("click", replay);
+  document.getElementById("toggleText").addEventListener("click", () => document.getElementById("hero").classList.toggle("hidden"));
+  window.addEventListener("keydown", (e) => {
+    if (e.target && e.target.tagName === "INPUT") return;
+    if (e.key === "h" || e.key === "H") document.getElementById("panel").classList.toggle("hidden");
+    if (e.key === "r" || e.key === "R") replay();
+    if (e.key === "t" || e.key === "T") document.getElementById("hero").classList.toggle("hidden");
+  });
+
+  // For testing from the console: window.__drop(x, y, strength)
+  window.__drop = drop;
+  window.__P = P;
+
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

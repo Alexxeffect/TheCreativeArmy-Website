@@ -15,6 +15,10 @@ import type { Project } from "@/content/types";
 export const site = {
   name: "TheCreativeArmy",
 
+  // The address the site lives at (thecreativearmy.com redirects to this www
+  // version in Vercel). Used by the sitemap and robots.txt.
+  url: "https://www.thecreativearmy.com",
+
   meta: {
     // ⚠ Not in Figma. Draft wording built from the hero copy; Alex to confirm.
     title: "TheCreativeArmy: brand design studio",
@@ -36,8 +40,13 @@ export const site = {
   },
 
   hero: {
-    // The headline cycles through these, word by word (see CyclingHeadline).
-    // The first one is what shows on load / with reduced motion.
+    // "\n" = exact line break (tablet/desktop; phones wrap naturally). The
+    // words rise into place on load (see WordRise).
+    headline: "Big ideas deserve\nto look the part",
+    subhead:
+      "We are a brand design studio working with founders whose ideas have scaled faster than their brands.",
+    // The earlier cycling headlines. Not used by the current design; kept so
+    // <CyclingHeadline> can be brought back.
     headlines: [
       // "\n" = exact line break (tablet/desktop; phones wrap naturally).
       // This gives the rag:
@@ -45,15 +54,35 @@ export const site = {
       "Empowering the\nvoices of the ideas\ndefining tomorrow",
       "Big ideas deserve\nto look the part",
     ],
-    // ⚠ Figma copy uses the word "challenger". BUILD_PLAN.md says not to use it
-    // on-page. Kept as designed until Alex decides.
-    subhead:
-      "We are a brand design studio building challenger brands. We work with founders whose ideas are ready before their brands are.",
   },
 
   work: {
-    heading: "Our work",
+    eyebrow: "Our work",
+    heading: "Brands built from zero",
     viewProject: "View Project",
+  },
+
+  // "Why work with us?" (white block under the work section) and the logo row.
+  why: {
+    heading: "Why work with us?",
+    // Three cards in a row; clicking a closed one opens it and closes the one
+    // that was open. "\n" = exact line break, as in Figma.
+    cards: [
+      {
+        title: "We get you, cause\nwe’re like you.",
+        // Same wording as the old "We know who you are" paragraph (see `clients`).
+        body: "You’re ambitious, strong-willed and maybe a bit delusional (we are too). You have a great idea that you really believe in, but it doesn’t look like it just yet. You want to change that. Well that’s why we’re here.",
+      },
+      {
+        title: "We can take you where\nyou need to go.",
+        body: "We’ve done it for others like you, multiple times. We have a solid process, that guarantees consistent outcomes.",
+      },
+      {
+        title: "Not much to lose, so\nmuch to gain",
+        body: "If we’re not confident that we can help you, we won’t work with you. We’d rather refer you to someone else",
+      },
+    ],
+    trustedBy: "Trusted by",
   },
 
   clients: {
@@ -82,20 +111,36 @@ export const site = {
 
   testimonials: {
     heading: "What clients say",
-    // ⚠ Figma shows 3 cards but cards 2 and 3 are identical. Only the 2 distinct
-    // quotes are used here until Alex confirms which to show.
+    // `avatar` = the client's logo, shown in white beside the name. Give the
+    // image's real width/height, and `fileColor` = the colour the file is drawn
+    // in ("black" files are turned white, "white" files are used as they are).
     items: [
-      {
-        quote:
-          "He listens deeply, offers insightful advice, and explains every design direction with clarity and purpose… I’m not easily satisfied, yet he managed to bring to life exactly what I had envisioned.",
-        name: "Victoria Olatunde",
-        company: "Hydrowells",
-      },
       {
         quote:
           "Working with Alex of TheCreativeArmy has been one of the most rewarding creative experiences. After in-depth conversations and a thorough study of our brand strategy, he delivered an identity for Hydrowells that truly reflects the heart of the brand… I’m not easily satisfied, yet he managed to bring to life exactly what I had envisioned.",
         name: "Victoria Olatunde",
         company: "Hydrowells",
+        avatar: {
+          src: "/images/logos/hydrowells.png",
+          alt: "Hydrowells logo",
+          width: 158,
+          height: 300,
+          fileColor: "black",
+        },
+      },
+      {
+        // Shortened from Adewole's longer note (his words, trimmed).
+        quote:
+          "Alexander co-creates with you. He sees what you see, from the very place you are standing, then takes your ideas and produces something beautiful with them… He’s keen on the details, adds the extra juice and walks you through the thought behind it. He’s my Picasso!",
+        name: "Adewole Timothy",
+        company: "Founder, TRG",
+        avatar: {
+          src: "/images/home/trg-atom-white.png",
+          alt: "TRG logo",
+          width: 1041,
+          height: 1088,
+          fileColor: "white",
+        },
       },
     ],
   },
@@ -190,16 +235,20 @@ export const projects: Project[] = [
         kind: "image",
         src: "/images/home/hydrowells-business-card.png",
         alt: "Hydrowells business cards",
+        // Crops copied from the Figma frame "Updated landing page" (917:1861).
+        crop: { w: 112.4, h: 101.2, left: -7.56, top: -1.23 },
       },
       {
         kind: "image",
         src: "/images/home/hydrowells-fabric.png",
         alt: "Hydrowells logo on fabric",
+        crop: { w: 235.19, h: 108.21, left: -91.5, top: -4.11 },
       },
       {
         kind: "image",
         src: "/images/home/hydrowells-billboard.png",
         alt: "Hydrowells billboard mockup",
+        crop: { w: 281.5, h: 131.4, left: -90.76, top: -3.08 },
       },
     ],
   },
@@ -211,11 +260,24 @@ export const projects: Project[] = [
 
 export const clientLogos = [
   // height = px at Figma desktop width (1512). Scales down fluidly.
-  { src: "/images/home/trg-atom-white.png", alt: "The Rabbi Global", height: 82, invert: true },
-  { src: "/images/logos/sos-icon.png", alt: "Seeds of the Soil symbol", height: 80 },
+  {
+    src: "/images/home/trg-atom-white.png",
+    alt: "The Rabbi Global",
+    height: 82,
+    invert: true,
+  },
+  {
+    src: "/images/logos/sos-icon.png",
+    alt: "Seeds of the Soil symbol",
+    height: 80,
+  },
   { src: "/images/logos/reeda.png", alt: "Reeda", height: 50 },
   { src: "/images/logos/hydrowells.png", alt: "Hydrowells", height: 80 },
-  { src: "/images/logos/sos-wordmark.png", alt: "Seeds of the Soil", height: 80 },
+  {
+    src: "/images/logos/sos-wordmark.png",
+    alt: "Seeds of the Soil",
+    height: 80,
+  },
   // ⚠ Client unknown: Figma layer is just "Group 11". Alt text is generic until Alex names it.
   // ⚠ The last logo is labelled "BN" in Figma; full client name to be confirmed.
   { src: "/images/logos/client-compass.svg", alt: "Client logo", height: 93 },

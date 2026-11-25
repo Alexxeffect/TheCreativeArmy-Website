@@ -28,6 +28,12 @@ export default function WorkTile({
   if (tile.kind === "image") {
     if (tile.crop) {
       const { w, h, left, top } = tile.crop;
+      // The picture is drawn `w`% as wide as the tile, so ask for a file that
+      // much bigger (otherwise a zoomed-in crop comes out blurry).
+      const cropSizes = sizes.replace(
+        /(\d+(?:\.\d+)?)vw/g,
+        (_, n) => `${Math.round((Number(n) * w) / 100)}vw`,
+      );
       return (
         <div className={base} style={tile.panel ? { backgroundColor: tile.panel } : undefined}>
           <div
@@ -38,7 +44,7 @@ export default function WorkTile({
               src={tile.src}
               alt={tile.alt}
               fill
-              sizes={sizes}
+              sizes={cropSizes}
               priority={priority}
               className="object-cover"
             />

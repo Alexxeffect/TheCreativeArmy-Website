@@ -17,7 +17,7 @@ const WIDE_SIZES = "100vw";
 /** Paragraphs separated by a blank line, as in the Figma text blocks. */
 function Paragraphs({ body }: { body: string[] }) {
   return (
-    <div className="space-y-[1.2em] text-b1">
+    <div className="space-y-[1.2em] text-b3">
       {body.map((p) => (
         <p key={p}>{p}</p>
       ))}

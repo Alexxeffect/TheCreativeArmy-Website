@@ -1,0 +1,60 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="387.695" height="261.406" viewBox="0 0 387.695 261.406" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Gradient coin 6">
+<g id="Coin edge &#194;&#183; red to shadow" filter="url(#filter0_n_0_17)">
+<path d="M0 97.7515C0 43.7648 72.0409 0 160.908 0C249.775 0 321.816 43.7648 321.816 97.7515V137.335C321.816 191.321 249.775 235.086 160.908 235.086C72.0409 235.086 0 191.321 0 137.335V97.7515Z" fill="url(#paint0_linear_0_17)"/>
+</g>
+<g id="Coin face &#194;&#183; original gradient" filter="url(#filter1_n_0_17)">
+<ellipse cx="160.908" cy="97.7515" rx="160.908" ry="97.7515" fill="url(#paint1_linear_0_17)"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_n_0_17" x="0" y="0" width="321.816" height="235.086" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feTurbulence type="fractalNoise" baseFrequency="2 2" stitchTiles="stitch" numOctaves="3" result="noise" seed="0" />
+<feColorMatrix in="noise" type="luminanceToAlpha" result="alphaNoise" />
+<feComponentTransfer in="alphaNoise" result="coloredNoise1">
+<feFuncA type="discrete" tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "/>
+</feComponentTransfer>
+<feComposite operator="in" in2="shape" in="coloredNoise1" result="noise1Clipped" />
+<feFlood flood-color="rgba(255, 255, 255, 0.2)" result="color1Flood" />
+<feComposite operator="in" in2="noise1Clipped" in="color1Flood" result="color1" />
+<feMerge result="effect1_noise_0_17">
+<feMergeNode in="shape" />
+<feMergeNode in="color1" />
+</feMerge>
+</filter>
+<filter id="filter1_n_0_17" x="0" y="0" width="321.816" height="195.503" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feTurbulence type="fractalNoise" baseFrequency="2 2" stitchTiles="stitch" numOctaves="3" result="noise" seed="7030" />
+<feColorMatrix in="noise" type="luminanceToAlpha" result="alphaNoise" />
+<feComponentTransfer in="alphaNoise" result="coloredNoise1">
+<feFuncA type="discrete" tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "/>
+</feComponentTransfer>
+<feComposite operator="in" in2="shape" in="coloredNoise1" result="noise1Clipped" />
+<feFlood flood-color="rgba(255, 255, 255, 0.35)" result="color1Flood" />
+<feComposite operator="in" in2="noise1Clipped" in="color1Flood" result="color1" />
+<feMerge result="effect1_noise_0_17">
+<feMergeNode in="shape" />
+<feMergeNode in="color1" />
+</feMerge>
+</filter>
+<linearGradient id="paint0_linear_0_17" x1="0" y1="117.543" x2="321.816" y2="117.543" gradientUnits="userSpaceOnUse">
+<stop stop-color="#160600"/>
+<stop offset="0.23" stop-color="#430B04"/>
+<stop offset="0.53" stop-color="#F30A08"/>
+<stop offset="0.78" stop-color="#A4110B"/>
+<stop offset="1" stop-color="#210604"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_17" x1="49.1663" y1="29.8685" x2="169.655" y2="228.204" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="0.165364" stop-color="#FFD0BB"/>
+<stop offset="0.389423" stop-color="#FF5100"/>
+<stop offset="0.5" stop-color="#FC0000"/>
+<stop offset="0.620192" stop-color="#FF5100"/>
+<stop offset="0.872613" stop-color="#FFD0BB"/>
+<stop offset="0.964955" stop-color="white"/>
+</linearGradient>
+</defs>
+</svg>
