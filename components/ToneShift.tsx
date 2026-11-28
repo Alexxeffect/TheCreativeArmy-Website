@@ -62,7 +62,7 @@ export default function ToneShift({
     <div
       data-tone={tone}
       style={{ transitionDuration: `${durationMs}ms` }}
-      className="bg-ink text-paper transition-colors ease-[cubic-bezier(0.4,0,0.2,1)] data-[tone=light]:bg-paper data-[tone=light]:text-ink motion-reduce:transition-none"
+      className="group/tone bg-ink text-paper transition-colors ease-[cubic-bezier(0.4,0,0.2,1)] data-[tone=light]:bg-paper data-[tone=light]:text-ink motion-reduce:transition-none"
     >
       {children}
     </div>

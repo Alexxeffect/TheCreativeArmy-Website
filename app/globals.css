@@ -469,3 +469,43 @@
     }
   }
 }
+
+/* Testimonial dots: the ring around the active dot draws itself, clockwise from
+   the top, over the time that testimonial stays up (--dot-ms, set by the
+   carousel). It is also the carousel's clock: when it finishes, the carousel
+   moves on. `pathLength="100"` on the circle makes 100 = a full lap whatever the
+   circle's size. Paused (pointer over it, keyboard focus, off screen) = the
+   animation holds where it is. With "reduce motion" the ring is hidden, so
+   nothing ever finishes and nothing moves on by itself. */
+@keyframes dot-ring {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.dot-ring {
+  stroke-dasharray: 100;
+  animation: dot-ring var(--dot-ms, 15000ms) linear forwards;
+}
+.dot-ring[data-paused="true"] {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dot-ring-wrap {
+    display: none;
+  }
+}
+
+/* /contact form: browsers paint autofilled fields pale blue with dark text.
+   Paint them black with white text instead (the long transition stops the
+   browser's own colour from ever showing through). */
+.contact-field:-webkit-autofill,
+.contact-field:-webkit-autofill:hover,
+.contact-field:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff;
+  caret-color: #ffffff;
+  box-shadow: 0 0 0 1000px #000000 inset;
+  transition: background-color 5000s ease-in-out 0s;
+}

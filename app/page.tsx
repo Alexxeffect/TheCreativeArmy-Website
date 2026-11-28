@@ -43,7 +43,8 @@ export default function Home() {
           <FinalCTA />
         </div>
       </main>
-      <FooterReveal revealHeight="60svh">
+      {/* 320px tall at the 1512px Figma width, never under 150px. */}
+      <FooterReveal revealHeight="max(150px, 21.2vw)">
         <Footer />
       </FooterReveal>
     </>

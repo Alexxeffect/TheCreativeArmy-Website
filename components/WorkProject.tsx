@@ -4,6 +4,12 @@ import WorkTile from "@/components/WorkTile";
 import { site } from "@/content/site";
 import type { Project } from "@/content/types";
 
+// Summary + services are grey on the black work section. When the page fades
+// to white (see <ToneShift>) they go back to the normal text colour, fading
+// with it, so they never sit grey-on-white while scrolling away.
+const mutedText =
+  "text-muted transition-colors duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] group-data-[tone=light]/tone:text-ink motion-reduce:transition-none";
+
 /**
  * One project on the landing page: a row of three image tiles, then a line
  * with the client name + summary, the services, and a "View Project" button.
@@ -59,9 +65,12 @@ export default function WorkProject({ project }: { project: Project }) {
           <div className="grid items-center gap-4 md:grid-cols-[40%_1fr_auto]">
             <div>
               <h3 className="font-bold">{client}</h3>
-              <p className="max-w-[23em]">{summary}</p>
+              <p className={`max-w-[23em] ${mutedText}`}>{summary}</p>
             </div>
-            <p>{services}</p>
+            <p className={mutedText}>
+              {site.work.servicesLabel}
+              {services}
+            </p>
             {/* White button on the black work section. ⚠ Hydrowells has no case
             study yet, so its button shows (as in Figma) but is inactive. */}
             <Button

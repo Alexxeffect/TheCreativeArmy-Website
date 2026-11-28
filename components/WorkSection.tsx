@@ -18,7 +18,7 @@ export default function WorkSection() {
       <Container>
         {/* Label + headline float up and fade in as they scroll into view. */}
         <FadeIn rise={40} durationMs={1400}>
-          <p className="text-quote uppercase">{site.work.eyebrow}</p>
+          <p className="text-intro-sm uppercase md:text-quote">{site.work.eyebrow}</p>
           <h2 className="mt-[clamp(12px,2.2vw,33px)] max-w-[7.6em] font-display text-h2 uppercase leading-[0.987]">
             {site.work.heading}
           </h2>

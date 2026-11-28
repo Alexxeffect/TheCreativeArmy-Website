@@ -15,9 +15,13 @@ import { site } from "@/content/site";
 export default function Nav({
   showWork = false,
   variant = "default",
+  fade = true,
 }: {
   showWork?: boolean;
   variant?: "default" | "hero";
+  /** hero variant only: fade the wordmark in after 2s (the landing page's
+   *  entry); false shows it straight away (other pages on black). */
+  fade?: boolean;
 }) {
   if (variant === "hero") {
     // "TheCreative" + "A" + "rmy": the A is in a different font (CS Aither).
@@ -32,8 +36,12 @@ export default function Nav({
         <Link
           href="/"
           // Fades in 2s after load, once the red is well on its way up.
-          className="hero-wait font-fraktur text-mark text-paper"
-          style={{ "--hero-delay": "2000ms" } as React.CSSProperties}
+          className={`${fade ? "hero-wait " : ""}font-fraktur text-mark text-paper`}
+          style={
+            fade
+              ? ({ "--hero-delay": "2000ms" } as React.CSSProperties)
+              : undefined
+          }
           aria-label={`${site.name} home`}
         >
           {before}
@@ -63,7 +71,7 @@ export default function Nav({
         </Link>
       )}
 
-      <Button href={`mailto:${site.contact.email}`} variant="brand" size="sm">
+      <Button href="/contact" variant="brand" size="sm">
         {site.nav.cta}
       </Button>
     </header>

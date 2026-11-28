@@ -29,9 +29,40 @@ export const site = {
   contact: {
     // Email is from the Figma design (final CTA button).
     email: "hello@thecreativearmy.com",
-    // ⚠ Booking link intentionally blank for now (Alex: "we'll build that after").
-    // While empty, the "Schedule a call" button renders but is inactive.
-    bookingUrl: "",
+    // The Cal.com event the /contact page books into ("Discovery meeting", 30m,
+    // Google Meet).
+    bookingUrl: "https://cal.com/thecreativearmy-vknyyn/discovery",
+  },
+
+  // The /contact page: a short form (Primary-style), then Cal.com's calendar
+  // with the answers filled in.
+  contactPage: {
+    title: "Book an intro call",
+    priceNote: "Identity projects typically start at $5,000.",
+    intro: "First, a little about yourself.",
+    fields: {
+      name: "Name",
+      role: "Title/Role",
+      email: "Email",
+      company: "Company Name",
+      website: "Company Website",
+    },
+    about: {
+      label: "Tell us about your company in 2-3 sentences.",
+      placeholder: "Start typing here…",
+    },
+    references: {
+      label: "What brands or websites feel closest to the look you want?",
+      placeholder: "Drop any website, Figma, or Pinterest links",
+    },
+    notes: {
+      label: "Additional notes",
+      placeholder: "Please share anything that will help prepare for our meeting.",
+    },
+    submit: "Book my call",
+    pickTime: "Now pick a time that suits you.",
+    edit: "Edit my answers",
+    emailPrompt: "Prefer to email? Tell us about your project.",
   },
 
   nav: {
@@ -40,9 +71,14 @@ export const site = {
   },
 
   hero: {
-    // "\n" = exact line break (tablet/desktop; phones wrap naturally). The
-    // words rise into place on load (see WordRise).
-    headline: "Big ideas deserve\nto look the part",
+    // Each inner list is one line on tablet/desktop; on phones every piece
+    // gets a line of its own (4 lines, as in the Figma phone frame):
+    //   desktop: BIG IDEAS DESERVE / TO LOOK THE PART
+    //   phone:   BIG IDEAS / DESERVE / TO LOOK / THE PART
+    headline: [
+      ["Big ideas", "deserve"],
+      ["to look", "the part"],
+    ],
     subhead:
       "We are a brand design studio working with founders whose ideas have scaled faster than their brands.",
     // The earlier cycling headlines. Not used by the current design; kept so
@@ -60,6 +96,7 @@ export const site = {
     eyebrow: "Our work",
     heading: "Brands built from zero",
     viewProject: "View Project",
+    servicesLabel: "Services - ", // goes in front of each project's services
   },
 
   // "Why work with us?" (white block under the work section) and the logo row.
@@ -146,14 +183,35 @@ export const site = {
   },
 
   cta: {
-    // Two lines, as in Figma (hard break before "Let's collaborate").
-    headline: [
-      "The next generation of builders need brands that can carry their vision.",
-      "Let’s collaborate",
-    ],
+    headline: "Partner with us",
+    subhead:
+      "The next generation of builders need brands that can carry their vision",
+    // Not shown in the current design (kept for when a booking link exists):
     emailLabel: "Reach out with all project enquiries to:",
     bookingLabel: "Or schedule a call here:",
     bookingButton: "Schedule a call",
+  },
+
+  footer: {
+    contactLabel: "Contact",
+    // Icons are the Figma ones (public/images/footer). `size` is the icon's
+    // width in px on desktop (they shrink on phones). ⚠ No profile links yet:
+    // while `href` is empty the icon shows but is not clickable.
+    socials: [
+      { label: "X", src: "/images/footer/x.png", size: 46, href: "" },
+      {
+        label: "Instagram",
+        src: "/images/footer/instagram.png",
+        size: 44,
+        href: "",
+      },
+      {
+        label: "LinkedIn",
+        src: "/images/footer/linkedin.png",
+        size: 46,
+        href: "",
+      },
+    ],
   },
 } as const;
 

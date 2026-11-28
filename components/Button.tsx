@@ -23,14 +23,15 @@ import type { ReactNode } from "react";
  *              without JavaScript (the offer section is then orange).
  *
  * Sizes: "sm" is the nav/offer size, "md" the project-row size, "lg" and "xl"
- * the big final-CTA sizes (xl is the taller one).
+ * the big final-CTA sizes (xl is the taller one), "form" the full-width
+ * submit button under the /contact form.
  *
  * If `href` is empty the button still shows (so the layout matches the design)
  * but is inactive. That's how "Schedule a call" works until a booking link exists.
  */
 
 type Variant = "brand" | "outline" | "dark" | "light" | "tint";
-type Size = "sm" | "md" | "lg" | "xl";
+type Size = "sm" | "md" | "lg" | "xl" | "form";
 
 const variantClass: Record<Variant, string> = {
   brand: "bg-brand text-paper",
@@ -58,10 +59,14 @@ const sizeClass: Record<Size, string> = {
   // email button more vertical padding (21.5px) than the outlined one (12px).
   lg: "text-b1 px-[clamp(24px,3.05vw,46px)] py-[clamp(8px,0.8vw,12px)] rounded-btn",
   xl: "text-b1 px-[clamp(24px,3.05vw,46px)] py-[clamp(12px,1.42vw,21.5px)] rounded-btn",
+  // The full-width submit button under a form (/contact).
+  form: "w-full text-b3 py-[clamp(16px,1.6vw,22px)] rounded-btn",
 };
 
 type Props = {
   href?: string;
+  /** Set for a real <button> (a form's submit button) instead of a link. */
+  type?: "submit" | "button";
   variant: Variant;
   size: Size;
   children: ReactNode;
@@ -70,6 +75,7 @@ type Props = {
 
 export default function Button({
   href,
+  type,
   variant,
   size,
   children,
@@ -77,6 +83,14 @@ export default function Button({
 }: Props) {
   const base = `inline-flex items-center justify-center whitespace-nowrap transition-[opacity,background-color,color] duration-200 ${variantClass[variant]} ${sizeClass[size]} ${className}`;
   const classes = `${base} ${hoverClass[variant]}`;
+
+  if (type) {
+    return (
+      <button type={type} className={classes}>
+        {children}
+      </button>
+    );
+  }
 
   if (!href) {
     // Inactive: no destination yet. aria-disabled tells screen readers.

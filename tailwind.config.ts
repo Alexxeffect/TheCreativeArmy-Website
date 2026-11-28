@@ -23,6 +23,8 @@ const config: Config = {
         brand: "#FF5100", // orange: nav wordmark, buttons, offer + testimonial panels, footer
         ink: "#000000", // text on white
         paper: "#FFFFFF", // page background
+        muted: "#BBBBBB", // secondary text on black (work section: project summary + services)
+        footer: "#030101", // the black footer band (the red fade ends in pure black just above it)
         trg: "#FF0000", // TRG's red; used for the "Learn More" label + TRG card backdrops
         placeholder: "#D9D9D9", // empty image slots
         surface: "#F2F2F2", // case study page background (TRG)
@@ -48,10 +50,12 @@ const config: Config = {
         // Redaction (headlines). All uppercase at call sites.
         h1: ["clamp(48px, 7.275vw, 110px)", { lineHeight: "1.2" }], // hero only (110px; Figma frame had 130px)
         hero: ["clamp(40px, 9.34vw, 141px)", { lineHeight: "1.2" }], // landing hero headline (141px in the updated Figma frame)
+        "hero-phone": ["clamp(40px, 15.12vw, 65px)", { lineHeight: "1.2" }], // the same headline on phones: 65px at the 430px Figma phone frame
+        "intro-sm": ["14px", { lineHeight: "1.2" }], // phone size of the hero intro line and the "Our work" label (use with md:text-quote; the Figma phone frame has 12px, trying 14)
         h2: ["clamp(36px, 4.63vw, 70px)", { lineHeight: "1.2" }], // section headlines
         h3: ["clamp(30px, 2.98vw, 45px)", { lineHeight: "1.2" }], // 45px: "Trusted by", card titles
         "quote-lg": ["clamp(20px, 2.646vw, 40px)", { lineHeight: "1.2" }], // 40px: the testimonial quote (Neue Haas, body font)
-        mark: ["clamp(22px, 1.984vw, 30px)", { lineHeight: "1.2" }], // landing wordmark: 30px on desktop
+        mark: ["clamp(20px, 1.984vw, 30px)", { lineHeight: "1.2" }], // landing wordmark: 30px on desktop, 20px on phones
         cta: ["clamp(32px, 4.96vw, 75px)", { lineHeight: "1.2" }], // 75px: closing call-to-action headline
         wordmark: ["clamp(24px, 8.7vw, 132px)", { lineHeight: "1.2" }], // giant footer wordmark
         "wordmark-nav": ["clamp(18px, 1.65vw, 25px)", { lineHeight: "1.2" }], // nav wordmark
@@ -59,6 +63,7 @@ const config: Config = {
         sh1: ["clamp(22px, 2.31vw, 35px)", { lineHeight: "1.2" }], // 35px
         b1: ["clamp(20px, 1.98vw, 30px)", { lineHeight: "1.2" }], // 30px  (b2 = same, bold)
         quote: ["clamp(18px, 1.65vw, 25px)", { lineHeight: "1.2" }], // 25px: testimonials, CTA labels
+        b4: ["clamp(16px, 1.455vw, 22px)", { lineHeight: "1.2" }], // 22px: closing CTA sub-line, footer contact
         btn: ["clamp(16px, 1.39vw, 21px)", { lineHeight: "1.2" }], // 21px: small buttons
         b3: ["clamp(16px, 1.32vw, 20px)", { lineHeight: "1.2" }], // 20px: body, labels, project rows
         // 22px reading copy, same recipe as the portfolio site's "Change by Design" text:
