@@ -49,6 +49,8 @@ export default function Footer() {
                 {s.href ? (
                   <a
                     href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     aria-label={s.label}
                     className="block transition-opacity duration-200 hover:opacity-85"
                   >

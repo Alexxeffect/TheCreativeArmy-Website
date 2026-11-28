@@ -203,7 +203,7 @@ export const site = {
         label: "Instagram",
         src: "/images/footer/instagram.png",
         size: 44,
-        href: "",
+        href: "https://www.instagram.com/thecreativearmy_/",
       },
       {
         label: "LinkedIn",
